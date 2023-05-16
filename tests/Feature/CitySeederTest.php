@@ -16,7 +16,7 @@ class CitySeederTest extends TestCase
      */
     public function test_example(): void
     {
-        Artisan::call('migrate:fresh');
+        City::query()->truncate();
         $this->seed(CityTableSeeder::class);
 
         $citiesCount = City::count();
