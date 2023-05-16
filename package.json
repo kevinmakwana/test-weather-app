@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "precommit": "php artisan test"
+    "precommit": "php artisan migrate:fresh && php artisan test"
   },
   "devDependencies": {
     "axios": "^1.1.2",
