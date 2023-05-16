@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class City extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'latitude', 'longitude'];
+
+    public function cityWeathers()
+    {
+        return $this->hasMany(CityWeather::class);
+    }
 }
