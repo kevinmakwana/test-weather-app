@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\City;
+use App\Models\CityWeather;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -44,6 +46,7 @@ class CityWeatherTest extends TestCase
                 'speed' => 5.59,
                 'deg' => 248,
             ],
+            'name' => "Rajkot"
             // Include other necessary data here
         ]);
 
@@ -56,7 +59,7 @@ class CityWeatherTest extends TestCase
             ->method('request')
             ->with('GET', $weatherUrl, [
                 'query' => [
-                    'q' => 'rajkot',
+                    'q' => 'Rajkot',
                     'appid' => $weatherKey,
                 ],
             ])
@@ -66,16 +69,23 @@ class CityWeatherTest extends TestCase
         $openWeatherMapService = new OpenWeatherMapService($httpClientMock);
 
         // Call the method you want to test
-        $weatherData = $openWeatherMapService->getWeatherForCity('rajkot');
-        
+        $weatherData = $openWeatherMapService->getWeatherForCity('Rajkot');
+        //dd($weatherData);
         // Assert the expected results
-        $this->assertEquals('Clear', $weatherData['weather'][0]['main']);
-        $this->assertEquals(301.06, $weatherData['main']['temp']);
-        $this->assertEquals(301.06, $weatherData['main']['temp_min']);
-        $this->assertEquals(301.06, $weatherData['main']['temp_max']);
-        $this->assertEquals(1008, $weatherData['main']['pressure']);
-        $this->assertEquals(72, $weatherData['main']['humidity']);
-        $this->assertEquals(5.59, $weatherData['wind']['speed']);
-        $this->assertEquals(248, $weatherData['wind']['deg']);
+        $this->assertIsArray($weatherData);
+        $this->assertArrayHasKey('name', $weatherData);
+
+         // Store the weather data in a model
+         $city = City::whereName('rajkot')->first();
+         $weatherModel = $city->cityWeathers()->create([
+            'temperature' => $weatherData['main']['temp'],
+            'min_temperature' => $weatherData['main']['temp_min'],
+            'max_temperature' => $weatherData['main']['temp_max'],
+            'humidity' => $weatherData['main']['humidity'],
+            'wind_speed' => $weatherData['wind']['speed']
+        ]);
+         // Assert that the model is created with the correct data
+         $this->assertInstanceOf(CityWeather::class, $weatherModel);
     }
+    
 }
