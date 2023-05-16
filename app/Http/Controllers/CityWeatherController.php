@@ -2,9 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\CityWeather;
+use App\Services\OpenWeatherMapService;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class CityWeatherController extends Controller
 {
     //
+    public function getWeatherDetails($city){
+        $city = City::whereName($city)->firstOrFail();
+        
+        $openWeatherMapService = new OpenWeatherMapService((new Client));
+
+        $weatherData = $openWeatherMapService->getWeatherForCity($city->name);
+
+        $city->cityWeathers()->create([
+            'temperature' => $weatherData['main']['temp'],
+            'min_temperature' => $weatherData['main']['temp_min'],
+            'max_temperature' => $weatherData['main']['temp_max'],
+            'humidity' => $weatherData['main']['humidity'],
+            'wind_speed' => $weatherData['wind']['speed']
+        ]);
+    }
 }

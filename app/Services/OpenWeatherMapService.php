@@ -20,6 +20,7 @@ class OpenWeatherMapService
 
     public function getWeatherForCity($city)
     {
+        //dd($this->client,$this->weatherUrl,$this->apiKey);
         try {
             $response = $this->client->request('GET', $this->weatherUrl, [
                 'query' => [
@@ -27,11 +28,11 @@ class OpenWeatherMapService
                     'appid' => $this->apiKey,
                 ],
             ]);
-            
+              
             $body = $response->getBody();
             
             $data = json_decode($body, true);
-            
+
             return $data;
         } catch (GuzzleException $e) {
             // Handle the exception appropriately, e.g., log the error or throw a custom exception
