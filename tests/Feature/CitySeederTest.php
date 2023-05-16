@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\City;
+use App\Models\CityWeather;
 use Database\Seeders\CityTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -16,7 +17,8 @@ class CitySeederTest extends TestCase
      */
     public function test_example(): void
     {
-        City::query()->truncate();
+        CityWeather::query()->delete();
+        City::query()->delete();
         $this->seed(CityTableSeeder::class);
 
         $citiesCount = City::count();

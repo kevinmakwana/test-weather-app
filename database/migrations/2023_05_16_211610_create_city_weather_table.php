@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('city_weathers', function (Blueprint $table) {
+        Schema::create('city_weather', function (Blueprint $table) {
             $table->id();
             $table->foreignId('city_id')->constrained()->onDelete('cascade');
             $table->float('temperature');
