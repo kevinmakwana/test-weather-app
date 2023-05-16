@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('weather/{city}',[CityWeatherController::class,'getWeatherDetails']);
+Route::get('weather-forcast/{city}',[CityWeatherController::class,'getWeatherForcastDetails']);
