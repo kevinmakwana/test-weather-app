@@ -67,10 +67,15 @@ class CityWeatherTest extends TestCase
 
         // Call the method you want to test
         $weatherData = $openWeatherMapService->getWeatherForCity('rajkot');
+        
         // Assert the expected results
         $this->assertEquals('Clear', $weatherData['weather'][0]['main']);
         $this->assertEquals(301.06, $weatherData['main']['temp']);
+        $this->assertEquals(301.06, $weatherData['main']['temp_min']);
+        $this->assertEquals(301.06, $weatherData['main']['temp_max']);
+        $this->assertEquals(1008, $weatherData['main']['pressure']);
+        $this->assertEquals(72, $weatherData['main']['humidity']);
         $this->assertEquals(5.59, $weatherData['wind']['speed']);
-        // Add more assertions for other data if needed
+        $this->assertEquals(248, $weatherData['wind']['deg']);
     }
 }
