@@ -10,12 +10,14 @@ class OpenWeatherMapService
     protected $client;
     protected $apiKey;
     protected $weatherUrl;
+    protected $weatherForcastUrl;
 
     public function __construct(Client $client)
     {
         $this->client = $client;
         $this->apiKey = config('services.open_weather_map_key');
-        $this->weatherUrl = config('services.open_weather_map_url');
+        $this->weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
+        $this->weatherForcastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
     }
 
     public function getWeatherForCity($city)
@@ -28,14 +30,29 @@ class OpenWeatherMapService
                     'appid' => $this->apiKey,
                 ],
             ]);
-              
+
             $body = $response->getBody();
             
             $data = json_decode($body, true);
 
             return $data;
         } catch (GuzzleException $e) {
-            // Handle the exception appropriately, e.g., log the error or throw a custom exception
+            throw $e;
+        }
+    }
+
+    public function getFiveDayWeatherForecast($city)
+    {
+        try {
+            $response = $this->client->get('https://api.openweathermap.org/data/2.5/forecast', [
+                'query' => [
+                    'q' => $city,
+                    'appid' => $this->apiKey,
+                ],
+            ]);
+
+            return json_decode($response->getBody(), true);
+        } catch (GuzzleException $e) {
             throw $e;
         }
     }

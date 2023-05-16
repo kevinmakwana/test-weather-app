@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\City;
 use App\Models\CityWeather;
+use App\Models\WeatherForecast;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -21,6 +22,7 @@ class CityWeatherTest extends TestCase
     }
     public function testGetWeatherForCity()
     {
+       
         // Mocking the GuzzleHttp\Client
         $httpClientMock = $this->createMock(Client::class);
         $this->app->instance(Client::class, $httpClientMock);
@@ -52,7 +54,7 @@ class CityWeatherTest extends TestCase
 
         $response = new Response(200, [], $responseBody);
 
-        $weatherUrl = config('services.open_weather_map_url');
+        $weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
         $weatherKey = config('services.open_weather_map_key');
         // Set up the expected API request
         $httpClientMock->expects($this->once())
@@ -86,6 +88,54 @@ class CityWeatherTest extends TestCase
         ]);
          // Assert that the model is created with the correct data
          $this->assertInstanceOf(CityWeather::class, $weatherModel);
+    }
+
+    public function testGetFiveDayWeatherForecastAndStoreInModel()
+    {
+        // Mocking the GuzzleHttp\Client
+        $httpClientMock = $this->createMock(Client::class);
+        $this->app->instance(Client::class, $httpClientMock);
+
+        // Creating a mock response
+        $responseBody = file_get_contents(storage_path('app/5day_forecast.json'));
+        
+        $response = new Response(200, [], $responseBody);
+
+        $forcastWeatherUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+        $weatherKey = config('services.open_weather_map_key');
+        // Set up the expected API request
+        $httpClientMock->expects($this->once())
+            ->method('get')
+            ->with($forcastWeatherUrl, [
+                'query' => [
+                    'q' => 'Rajkot',
+                    'appid' => $weatherKey,
+                ],
+            ])
+            ->willReturn($response);
+
+        // Instantiate your WeatherService
+        $weatherService = new OpenWeatherMapService($httpClientMock);
+
+        // Call the method you want to test
+        $forecastData = $weatherService->getFiveDayWeatherForecast('Rajkot');
+        
+        // Assert the expected results
+        $this->assertIsArray($forecastData);
+        $this->assertArrayHasKey('list', $forecastData);
+        // Add more assertions for specific data or structure if needed
+
+        // Store the forecast data in a model
+        $city = City::whereName('Rajkot')->first();
+             
+        $weatherForecastModel = $city->cityWeathersForcasts()->create([
+            'city' => 'Rajkot',
+            'forecast_data' => json_encode($forecastData),
+        ]);
+
+        $this->assertInstanceOf(WeatherForecast::class, $weatherForecastModel);
+        $this->assertEquals('Rajkot', $weatherForecastModel->city);
+        $this->assertEquals($forecastData, json_decode($weatherForecastModel->forecast_data,true));
     }
     
 }

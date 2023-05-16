@@ -15,4 +15,9 @@ class City extends Model
     {
         return $this->hasMany(CityWeather::class);
     }
+
+    public function cityWeathersForcasts()
+    {
+        return $this->hasMany(WeatherForecast::class);
+    }
 }
