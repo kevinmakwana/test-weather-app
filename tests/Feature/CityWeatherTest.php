@@ -5,12 +5,10 @@ namespace Tests\Feature;
 use App\Models\City;
 use App\Models\CityWeather;
 use App\Models\WeatherForecast;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Services\OpenWeatherMapService;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
+use Tests\TestCase;
 
 class CityWeatherTest extends TestCase
 {
@@ -20,9 +18,10 @@ class CityWeatherTest extends TestCase
 
         // You can set up any necessary dependencies or mock objects here
     }
+
     public function testGetWeatherForCity()
     {
-       
+
         // Mocking the GuzzleHttp\Client
         $httpClientMock = $this->createMock(Client::class);
         $this->app->instance(Client::class, $httpClientMock);
@@ -48,7 +47,7 @@ class CityWeatherTest extends TestCase
                 'speed' => 5.59,
                 'deg' => 248,
             ],
-            'name' => "Rajkot"
+            'name' => 'Rajkot',
             // Include other necessary data here
         ]);
 
@@ -77,17 +76,17 @@ class CityWeatherTest extends TestCase
         $this->assertIsArray($weatherData);
         $this->assertArrayHasKey('name', $weatherData);
 
-         // Store the weather data in a model
-         $city = City::whereName('rajkot')->first();
-         $weatherModel = $city->cityWeathers()->create([
+        // Store the weather data in a model
+        $city = City::whereName('rajkot')->first();
+        $weatherModel = $city->cityWeathers()->create([
             'temperature' => $weatherData['main']['temp'],
             'min_temperature' => $weatherData['main']['temp_min'],
             'max_temperature' => $weatherData['main']['temp_max'],
             'humidity' => $weatherData['main']['humidity'],
-            'wind_speed' => $weatherData['wind']['speed']
+            'wind_speed' => $weatherData['wind']['speed'],
         ]);
-         // Assert that the model is created with the correct data
-         $this->assertInstanceOf(CityWeather::class, $weatherModel);
+        // Assert that the model is created with the correct data
+        $this->assertInstanceOf(CityWeather::class, $weatherModel);
     }
 
     public function testGetFiveDayWeatherForecastAndStoreInModel()
@@ -98,7 +97,7 @@ class CityWeatherTest extends TestCase
 
         // Creating a mock response
         $responseBody = file_get_contents(storage_path('app/5day_forecast.json'));
-        
+
         $response = new Response(200, [], $responseBody);
 
         $forcastWeatherUrl = 'https://api.openweathermap.org/data/2.5/forecast';
@@ -119,7 +118,7 @@ class CityWeatherTest extends TestCase
 
         // Call the method you want to test
         $forecastData = $weatherService->getFiveDayWeatherForecast('Rajkot');
-        
+
         // Assert the expected results
         $this->assertIsArray($forecastData);
         $this->assertArrayHasKey('list', $forecastData);
@@ -127,7 +126,7 @@ class CityWeatherTest extends TestCase
 
         // Store the forecast data in a model
         $city = City::whereName('Rajkot')->first();
-             
+
         $weatherForecastModel = $city->cityWeathersForcasts()->create([
             'city' => 'Rajkot',
             'forecast_data' => json_encode($forecastData),
@@ -135,7 +134,6 @@ class CityWeatherTest extends TestCase
 
         $this->assertInstanceOf(WeatherForecast::class, $weatherForecastModel);
         $this->assertEquals('Rajkot', $weatherForecastModel->city);
-        $this->assertEquals($forecastData, json_decode($weatherForecastModel->forecast_data,true));
+        $this->assertEquals($forecastData, json_decode($weatherForecastModel->forecast_data, true));
     }
-    
 }

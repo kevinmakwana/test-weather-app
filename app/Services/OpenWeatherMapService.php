@@ -8,8 +8,11 @@ use GuzzleHttp\Exception\GuzzleException;
 class OpenWeatherMapService
 {
     protected $client;
+
     protected $apiKey;
+
     protected $weatherUrl;
+
     protected $weatherForcastUrl;
 
     public function __construct(Client $client)
@@ -32,7 +35,7 @@ class OpenWeatherMapService
             ]);
 
             $body = $response->getBody();
-            
+
             $data = json_decode($body, true);
 
             return $data;

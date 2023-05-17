@@ -5,9 +5,6 @@ namespace Tests\Feature;
 use App\Models\City;
 use App\Models\CityWeather;
 use Database\Seeders\CityTableSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CitySeederTest extends TestCase

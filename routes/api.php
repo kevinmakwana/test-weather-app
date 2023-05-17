@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CityWeatherController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('weather/{city}',[CityWeatherController::class,'getWeatherDetails']);
-Route::get('weather-forcast/{city}',[CityWeatherController::class,'getWeatherForcastDetails']);
+Route::get('weather/{city}', [CityWeatherController::class, 'getWeatherDetails']);
+Route::get('weather-forcast/{city}', [CityWeatherController::class, 'getWeatherForcastDetails']);
 
-Route::post('cities',[CityController::class,'create']);
+Route::post('cities', [CityController::class, 'create']);

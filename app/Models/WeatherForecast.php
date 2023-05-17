@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class WeatherForecast extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'weather_forecasts';
 
     protected $fillable = [
